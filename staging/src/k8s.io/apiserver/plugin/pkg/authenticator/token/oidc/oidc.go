@@ -542,6 +542,7 @@ func (a *Authenticator) AuthenticateToken(ctx context.Context, token string) (*a
 	}
 
 	idToken, err := verifier.Verify(ctx, token)
+	klog.Info("-----1------", idToken)
 	if err != nil {
 		return nil, false, fmt.Errorf("oidc: verify token: %v", err)
 	}
@@ -550,6 +551,8 @@ func (a *Authenticator) AuthenticateToken(ctx context.Context, token string) (*a
 	if err := idToken.Claims(&c); err != nil {
 		return nil, false, fmt.Errorf("oidc: parse claims: %v", err)
 	}
+	klog.Info("-----2------", c)
+	klog.Info("-----3------", idToken.Audience)
 	if a.resolver != nil {
 		if err := a.resolver.expand(c); err != nil {
 			return nil, false, fmt.Errorf("oidc: could not expand distributed claims: %v", err)
@@ -685,4 +688,14 @@ func (c claims) hasClaim(name string) bool {
 		return false
 	}
 	return true
+}
+func (c claims) String() string {
+	sb := strings.Builder{}
+	for k, v := range c {
+		sb.WriteString(k)
+		sb.WriteString(":")
+		sb.Write(v)
+		sb.WriteString("\r\n")
+	}
+	return sb.String()
 }
