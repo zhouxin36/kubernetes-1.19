@@ -295,7 +295,7 @@ func newAuthenticator(opts Options, initVerifier func(ctx context.Context, a *Au
 	}
 
 	if url.Scheme != "https" {
-		//return nil, fmt.Errorf("'oidc-issuer-url' (%q) has invalid scheme (%q), require 'https'", opts.IssuerURL, url.Scheme)
+		return nil, fmt.Errorf("'oidc-issuer-url' (%q) has invalid scheme (%q), require 'https'", opts.IssuerURL, url.Scheme)
 	}
 
 	if opts.UsernameClaim == "" {
