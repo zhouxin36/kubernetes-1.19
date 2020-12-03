@@ -112,7 +112,7 @@ dependencies:
     refPaths:
     - path: build/build-image/cross/VERSION
     - path: test/images/sample-apiserver/Dockerfile
-      match: registry\.cn-shenzhen\.aliyuncs\.com\/zhouxin_kubernetes\/kube-cross:v((([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)
+      match: k8s\.gcr\.io\/build-image\/kube-cross:v((([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)
 
   # Base images
   - name: "k8s.gcr.io/debian-base: dependents"
