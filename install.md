@@ -1,0 +1,1 @@
+`KUBE_BUILD_PLATFORMS=linux/amd64 make quick-release WHAT=cmd/kube-apiserver GOFLAGS=-v GOGCFLAGS="-N -l"`

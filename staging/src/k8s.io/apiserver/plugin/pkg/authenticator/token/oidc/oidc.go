@@ -262,15 +262,12 @@ func New(opts Options) (*Authenticator, error) {
 		// self-hosted providers, providers that run on top of Kubernetes itself.
 		go wait.PollUntil(time.Second*10, func() (done bool, err error) {
 			provider, err := oidc.NewProvider(ctx, a.issuerURL)
-			klog.Info("-------------b------------------", provider)
 			if err != nil {
 				klog.Errorf("oidc authenticator: initializing plugin: %v", err)
 				return false, nil
 			}
 
 			verifier := provider.Verifier(config)
-			klog.Info("-------------c------------------", config)
-			klog.Info("-------------d------------------", verifier)
 			a.setVerifier(verifier)
 			return true, nil
 		}, ctx.Done())
@@ -298,7 +295,7 @@ func newAuthenticator(opts Options, initVerifier func(ctx context.Context, a *Au
 	}
 
 	if url.Scheme != "https" {
-		return nil, fmt.Errorf("'oidc-issuer-url' (%q) has invalid scheme (%q), require 'https'", opts.IssuerURL, url.Scheme)
+		//return nil, fmt.Errorf("'oidc-issuer-url' (%q) has invalid scheme (%q), require 'https'", opts.IssuerURL, url.Scheme)
 	}
 
 	if opts.UsernameClaim == "" {
@@ -318,7 +315,6 @@ func newAuthenticator(opts Options, initVerifier func(ctx context.Context, a *Au
 	}
 
 	var roots *x509.CertPool
-	klog.Info("------------a---------------", opts.String())
 	if opts.CAFile != "" {
 		roots, err = certutil.NewPool(opts.CAFile)
 		if err != nil {

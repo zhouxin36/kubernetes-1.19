@@ -109,6 +109,8 @@ func (c *clientCache) setClient(clusterAddress, issuer, clientID string, client 
 }
 
 func newOIDCAuthProvider(clusterAddress string, cfg map[string]string, persister restclient.AuthProviderConfigPersister) (restclient.AuthProvider, error) {
+	bs, _ := json.Marshal(cfg)
+	klog.Info("------------init---a---------------", string(bs))
 	issuer := cfg[cfgIssuerURL]
 	if issuer == "" {
 		return nil, fmt.Errorf("Must provide %s", cfgIssuerURL)
