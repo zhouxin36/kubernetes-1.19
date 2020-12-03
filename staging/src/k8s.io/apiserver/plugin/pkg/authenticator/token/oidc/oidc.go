@@ -116,6 +116,48 @@ type Options struct {
 	now func() time.Time
 }
 
+func (o *Options) String() string {
+	sb := strings.Builder{}
+	sb.WriteString("IssuerURL:")
+	sb.WriteString(o.IssuerURL)
+	sb.WriteString("\r\n")
+
+	sb.WriteString("ClientID:")
+	sb.WriteString(o.ClientID)
+	sb.WriteString("\r\n")
+
+	sb.WriteString("CAFile:")
+	sb.WriteString(o.CAFile)
+	sb.WriteString("\r\n")
+
+	sb.WriteString("UsernameClaim:")
+	sb.WriteString(o.UsernameClaim)
+	sb.WriteString("\r\n")
+
+	sb.WriteString("UsernamePrefix:")
+	sb.WriteString(o.UsernamePrefix)
+	sb.WriteString("\r\n")
+
+	sb.WriteString("GroupsClaim:")
+	sb.WriteString(o.GroupsClaim)
+	sb.WriteString("\r\n")
+
+	sb.WriteString("GroupsPrefix:")
+	sb.WriteString(o.GroupsPrefix)
+	sb.WriteString("\r\n")
+
+	sb.WriteString("SupportedSigningAlgs:")
+	sb.WriteString(strings.Join(o.SupportedSigningAlgs, ","))
+	sb.WriteString("\r\n")
+
+	sb.WriteString("RequiredClaims:")
+	bs, _ := json.Marshal(o.RequiredClaims)
+	sb.WriteString(string(bs))
+	sb.WriteString("\r\n")
+
+	return sb.String()
+}
+
 // initVerifier creates a new ID token verifier for the given configuration and issuer URL.  On success, calls setVerifier with the
 // resulting verifier.
 func initVerifier(ctx context.Context, config *oidc.Config, iss string) (*oidc.IDTokenVerifier, error) {
@@ -220,12 +262,15 @@ func New(opts Options) (*Authenticator, error) {
 		// self-hosted providers, providers that run on top of Kubernetes itself.
 		go wait.PollUntil(time.Second*10, func() (done bool, err error) {
 			provider, err := oidc.NewProvider(ctx, a.issuerURL)
+			klog.Info("-------------b------------------", provider)
 			if err != nil {
 				klog.Errorf("oidc authenticator: initializing plugin: %v", err)
 				return false, nil
 			}
 
 			verifier := provider.Verifier(config)
+			klog.Info("-------------c------------------", config)
+			klog.Info("-------------d------------------", verifier)
 			a.setVerifier(verifier)
 			return true, nil
 		}, ctx.Done())
@@ -273,6 +318,7 @@ func newAuthenticator(opts Options, initVerifier func(ctx context.Context, a *Au
 	}
 
 	var roots *x509.CertPool
+	klog.Info("------------a---------------", opts.String())
 	if opts.CAFile != "" {
 		roots, err = certutil.NewPool(opts.CAFile)
 		if err != nil {
@@ -540,7 +586,7 @@ func (a *Authenticator) AuthenticateToken(ctx context.Context, token string) (*a
 	if !ok {
 		return nil, false, fmt.Errorf("oidc: authenticator not initialized")
 	}
-
+	klog.Info("-----0------", token)
 	idToken, err := verifier.Verify(ctx, token)
 	klog.Info("-----1------", idToken)
 	if err != nil {
